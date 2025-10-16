@@ -25,6 +25,7 @@ server.post("/adicionar", async(req, res)=>{
             username: usuario,
             userpassword: senha,
         })
+	res.sendStatus(201);
     }catch(err){
         console.log(err)
     }
