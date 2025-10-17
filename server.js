@@ -29,7 +29,7 @@ server.post("/adicionar", async(req, res)=>{
     }catch(err){
         console.log(err)
     }
-})
+});
 //rota autenticar
 server.post("/autenticar", async(req, res)=>{
     const usuario = req.body.usuario;
@@ -45,13 +45,13 @@ server.post("/autenticar", async(req, res)=>{
         }
     }
     res.send(resposta)  
-})
+});
 //rota destruir
 server.get("/destruir", async(req, res)=>{
     await CurrentUser.destroy({
         where: {username: 'emiliSouza'}
     })
-})
+});
 //rota reproduzir
 server.post("/reproduzir", async(req, res)=>{
     const episodio = req.body.titulo;
@@ -67,8 +67,9 @@ server.post("/reproduzir", async(req, res)=>{
         res.send("erro no servidor")
     }
 })
-.listen(3000, ()=>{
+
+server.listen(3000, ()=>{
     console.log("servidor rodando")
-})
+});
 
 //aqui está dando tudo certo quando a rota é / adiciona e quando a rota é /destruir deleta
