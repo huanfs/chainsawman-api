@@ -45,7 +45,7 @@ server.post("/autenticar", async(req, res)=>{
 
         if(usuarioEncontrado){
             if(usuarioEncontrado.userpassword === senha){
-                res.send(usuarioEncontrado) 
+               return  res.send(usuarioEncontrado) 
             }
             else{
                 return res.status(401).json({erro: "as senhas não coincidem"})
