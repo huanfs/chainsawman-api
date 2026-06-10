@@ -25,32 +25,57 @@ server.post("/adicionar", async(req, res)=>{
             username: usuario,
             userpassword: senha,
         })
-	res.sendStatus(201);
+	res.sendStatus(201).json({message: "usuário criado!"});
     }catch(err){
         console.log(err)
     }
 });
 //rota autenticar
 server.post("/autenticar", async(req, res)=>{
-    const usuario = req.body.usuario;
-    const senha = req.body.senha;
+    try{
+        const usuario = req.body.userName;
+        const senha = req.body.userPassword;
+        const usuarioEncontrado = await CurrentUser.findOne({
+            where:{ username: usuario}
+        })
 
-    const BuscarDados = await CurrentUser.findOne({
-        where:{ username: usuario}
-    })
-    const resposta = await BuscarDados;
-    if(resposta){
-        if(resposta.username == usuario && resposta.userpassword == senha){
-            console.log("a autenticação foi um sucesso, usuário e senha encontrados!")
+        if (!usuarioEncontrado) {
+                return res.status(401).json({ erro: "Usuário ou senha incorretos." });
+        }
+
+        if(usuarioEncontrado){
+            if(usuarioEncontrado.userpassword === senha){
+                res.send(usuarioEncontrado) 
+            }
+            else{
+                return res.status(401).json({erro: "as senhas não coincidem"})
+            }
         }
     }
-    res.send(resposta)  
+    catch{
+        return res.status(500).json({erro : "erro incomum no servidor"})
+    }
 });
 //rota destruir
-server.get("/destruir", async(req, res)=>{
-    await CurrentUser.destroy({
-        where: {username: 'emiliSouza'}
+server.post("/destruir", async(req, res)=>{
+    try{
+        const usuario = req.body.userName;
+        const senha = req.body.userPassword;
+        const isDeleted = await CurrentUser.destroy({
+        where: {
+            username: usuario, 
+            userpassword: senha
+        }
     })
+    if(isDeleted === 0) {
+            return res.status(404).json({erro: "usuário não encontrado"})
+        }
+
+        return res.sendStatus(200).json({message: "conta excluída"})
+    }
+    catch{
+        return res.sendStatus(500).json({erro: "erro no servidor"})
+    }
 });
 //rota reproduzir
 server.post("/reproduzir", async(req, res)=>{
