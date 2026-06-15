@@ -2,7 +2,7 @@ import Sequelize from "sequelize";
 
 import { DB } from "../database/db.js";
 
-export const CurrentUser = DB.define('users',{
+export const CreateUser = DB.define('users',{
     userName: {
         type: Sequelize.STRING,
     },
