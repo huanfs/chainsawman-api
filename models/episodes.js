@@ -2,15 +2,15 @@ import Sequelize from "sequelize";
 
 import { DB } from "../database/db.js";
 
-export const ShowEpisode = DB.define('episodios',{
+export const ShowEpisode = DB.define('episodes',{
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
     },
-    titulo: {
+    title: {
         type: Sequelize.STRING,
     },
-    episodio: {
+    episode: {
         type: Sequelize.STRING,
     },
     createdAt: {
