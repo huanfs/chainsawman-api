@@ -4,8 +4,8 @@ import cors from "cors";
 
 import bodyParser from "body-parser";
 
-import { CurrentUser } from "./models/user.js";
-import { ShowEpisode } from "./models/episodes.js";
+import { CreateUser } from "./models/user.js";
+import { Episodes } from "./models/episodes.js";
 
 const server = express();
 
@@ -16,82 +16,92 @@ server.use(cors({
 
 server.use(bodyParser.json()); //usando o body parser para ler a URL
 
-//rota adicionar finalizada
+//rota adicionar FINALIZADA
 server.post("/adicionar", async(req, res)=>{
-    const usuario = req.body.userName;
-    const senha = req.body.userPassword;
+    const { userName, userPassword } = req.body;
     try{
-        await CurrentUser.create({
-            username: usuario,
-            userpassword: senha,
+        const userExists = await CreateUser.findOne({
+            where:{userName:userName}
         })
-	res.sendStatus(201).json({message: "usuário criado!"});
+        if(userExists){
+            return res.status(409).json({message: "este usuário já existe!"});
+        }
+        await CreateUser.create({
+            userName: userName,
+            userPassword: userPassword,
+        })
+	    return res.status(201).json({message: "usuário criado!"});
     }catch(err){
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({message: "erro no servidor"});
     }
 });
-//rota autenticar
+
+//rota autenticar FINALIZADA
 server.post("/autenticar", async(req, res)=>{
     try{
-        const usuario = req.body.userName;
-        const senha = req.body.userPassword;
-        const usuarioEncontrado = await CurrentUser.findOne({
-            where:{ username: usuario}
+        const { userName, userPassword } = req.body;
+        const isFound = await CreateUser.findOne({
+            where:{ userName: userName}
         })
 
-        if (!usuarioEncontrado) {
-                return res.status(401).json({ erro: "Usuário ou senha incorretos." });
+        if (!isFound) {
+                return res.status(401).json({message: "Usuário não encontrado!" });
         }
 
-        if(usuarioEncontrado){
-            if(usuarioEncontrado.userpassword === senha){
-               return  res.send(usuarioEncontrado) 
+        if(isFound){
+            if(isFound.userPassword === userPassword){
+               return  res.status(200).json({message: "autenticado com sucesso!"}) 
             }
             else{
-                return res.status(401).json({erro: "as senhas não coincidem"})
+                return res.status(404).json({message: "senha inválida!"});
             }
         }
     }
     catch{
-        return res.status(500).json({erro : "erro incomum no servidor"})
+        return res.status(500).json({message: "erro incomum no servidor"});
     }
 });
-//rota destruir
+
+//rota destruir FINALIZADA
 server.post("/destruir", async(req, res)=>{
     try{
-        const usuario = req.body.userName;
-        const senha = req.body.userPassword;
-        const isDeleted = await CurrentUser.destroy({
+        const { userName, userPassword } = req.body;
+        const isDeleted = await CreateUser.destroy({
         where: {
-            username: usuario, 
-            userpassword: senha
+            userName: userName, 
+            userPassword: userPassword
         }
-    })
-    if(isDeleted === 0) {
-            return res.status(404).json({erro: "usuário não encontrado"})
+        })
+        if(isDeleted === 0) {
+                return res.status(404).json({error: "usuário não encontrado!"});
+            }
+        return res.status(200).json({message: "conta excluída!"});
         }
-
-        return res.sendStatus(200).json({message: "conta excluída"})
-    }
     catch{
-        return res.sendStatus(500).json({erro: "erro no servidor"})
+        return res.status(500).json({error: "erro no servidor"});
     }
 });
-//rota reproduzir
+//rota reproduzir FINALIZADA
 server.post("/reproduzir", async(req, res)=>{
-    const episodio = req.body.titulo;
+    const episode = req.body.title;
     try{
-        const BuscarEpisodio = await ShowEpisode.findOne({
-            where:{titulo: episodio}
+        const searchEpisode = await Episodes.findOne({
+            where:{title: episode}
         })
-        const resposta = await BuscarEpisodio;
-        res.send(resposta);
+        if(!searchEpisode) {
+            return res.status(404).json({error: "episódio não encontrado!"})
+        }
+        return res.status(200).json({
+            title: searchEpisode.title,
+            episode:searchEpisode.episode
+        });
     }
     catch(err){
-        console.log("deu erro: ", err)
-        res.send("erro no servidor")
+        console.log(err)
+        return res.status(500).json({error: "erro no servidor!"});
     }
-})
+});
 
 server.listen(3000, ()=>{
     console.log("servidor rodando")
