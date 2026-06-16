@@ -54,12 +54,12 @@ server.post("/autenticar", async(req, res)=>{
                return  res.status(200).json({message: "autenticado com sucesso!"}) 
             }
             else{
-                return res.status(404).json({message: "senha inválida!"});
+                return res.status(401).json({message: "senha inválida!"});
             }
         }
     }
-    catch{
-        return res.status(500).json({message: "erro incomum no servidor"});
+    catch(err){
+        return res.status(500).json({message: err.message});
     }
 });
 
