@@ -7,7 +7,11 @@ import bodyParser from "body-parser";
 import { CreateUser } from "./models/user.js";
 import { Episodes } from "./models/episodes.js";
 
-const server = express();
+import Register from "./routes/register.js";
+import Authenticate from "./routes/authenticate.js";
+import Remove from "./routes/remove.js";
+
+export const server = express();
 
 server.use(cors({
     origin: "*",
@@ -17,7 +21,7 @@ server.use(cors({
 server.use(bodyParser.json()); //usando o body parser para ler a URL
 
 //rota adicionar FINALIZADA
-server.post("/adicionar", async(req, res)=>{
+/*server.post("/adicionar", async(req, res)=>{
     const { userName, userPassword } = req.body;
     try{
         const userExists = await CreateUser.findOne({
@@ -35,10 +39,10 @@ server.post("/adicionar", async(req, res)=>{
         console.log(err);
         return res.status(500).json({message: "erro no servidor"});
     }
-});
-
+});*/
+server.use("/adicionar", Register);
 //rota autenticar FINALIZADA
-server.post("/autenticar", async(req, res)=>{
+/*server.post("/autenticar", async(req, res)=>{
     try{
         const { userName, userPassword } = req.body;
         const isFound = await CreateUser.findOne({
@@ -61,10 +65,10 @@ server.post("/autenticar", async(req, res)=>{
     catch(err){
         return res.status(500).json({message: err.message});
     }
-});
-
+});*/
+server.use("/autenticar", Authenticate);
 //rota destruir FINALIZADA
-server.post("/destruir", async(req, res)=>{
+/*server.post("/destruir", async(req, res)=>{
     try{
         const { userName, userPassword } = req.body;
         const isDeleted = await CreateUser.destroy({
@@ -81,7 +85,8 @@ server.post("/destruir", async(req, res)=>{
     catch{
         return res.status(500).json({error: "erro no servidor"});
     }
-});
+});*/
+server.use("/destruir", Remove);
 //rota reproduzir FINALIZADA
 server.post("/reproduzir", async(req, res)=>{
     const episode = req.body.title;
