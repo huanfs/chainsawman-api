@@ -10,7 +10,10 @@ import Play from "./routes/play.js";
 export const server = express();
 server.use(cors({
     origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
+server.options("*", cors());
 server.use(bodyParser.json());
 server.use("/register", Register);
 server.use("/authenticate", Authenticate);

@@ -5,6 +5,7 @@ const router = express.Router();
 router.post("/", async(req, res) => {
     try{
         const { userName, userPassword } = req.body;
+console.log(userName, userPassword);
         const isFound = await CreateUser.findOne({
             where:{ userName: userName}
         });
