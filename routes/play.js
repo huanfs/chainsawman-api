@@ -1,5 +1,5 @@
 import express from "express";
-import { Episodes } from "../models/episodes.js";
+import { Episodes } from "../models/episodes.js"; 
 const router = express.Router();
 
 router.post("/", async(req, res) => {
